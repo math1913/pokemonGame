@@ -9,7 +9,7 @@ mejoras visuales.
 - Pantalla de inicio con:
   - titulo del juego
   - seleccion de Pokemon para Jugador 1 y Jugador 2
-  - boton `Comencar Batalla`
+  - boton `Comenzar Batalla`
   - boton `Salir` con confirmacion
 - Pantalla de batalla con:
   - turnos alternos
@@ -18,7 +18,7 @@ mejoras visuales.
   - critico (10%) y fallo (5%, sin consumo de PP)
   - desactivacion de botones cuando no hay turno o PP suficiente
   - historial de ultimos movimientos
-  - animaciones basicas al atacar y recibir dano
+  - animaciones basicas al atacar y recibir daño
 - Pantalla final con:
   - ganador
   - ataques totales

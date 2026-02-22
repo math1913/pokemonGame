@@ -207,8 +207,8 @@ class _BattleScreenState extends State<BattleScreen> {
 
         registerHitOnDefender = true;
         _statusText = critical
-            ? 'Golpe critico de ${attacker.name}: $damage de danio.'
-            : '${attacker.name} causa $damage de danio.';
+            ? 'Golpe critico de ${attacker.name}: $damage de da\u00f1o.'
+            : '${attacker.name} causa $damage de da\u00f1o.';
 
         if (defender.isFainted) {
           _battleFinished = true;
@@ -300,6 +300,19 @@ class _BattleScreenState extends State<BattleScreen> {
     }
   }
 
+  Color _colorForMove(MoveType move) {
+    switch (move) {
+      case MoveType.quick:
+        return const Color(0xFF00ACC1);
+      case MoveType.normal:
+        return const Color(0xFF3949AB);
+      case MoveType.strong:
+        return const Color(0xFFF57C00);
+      case MoveType.heal:
+        return const Color(0xFF2E7D32);
+    }
+  }
+
   Color _healthColor(double ratio) {
     if (ratio <= 0.25) {
       return Colors.red;
@@ -312,73 +325,96 @@ class _BattleScreenState extends State<BattleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final currentFighter = _activePlayer == 1 ? _playerOne : _playerTwo;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Batalla Pokemon'),
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFFE3F2FD), Color(0xFFBBDEFB)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                _BattleHeader(
-                  activePlayerName:
-                      _activePlayer == 1 ? _playerOne.name : _playerTwo.name,
-                  statusText: _statusText,
-                  isFinished: _battleFinished,
-                ),
-                const SizedBox(height: 8),
-                _PokemonBattleCard(
-                  fighter: _playerOne,
-                  isTurn: _activePlayer == 1 && !_battleFinished,
-                  isAttacking: _playerOneAttacking,
-                  isHit: _playerOneHit,
-                  healthColor: _healthColor(
-                    _playerOne.hp / _playerOne.maxHp,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                _PokemonBattleCard(
-                  fighter: _playerTwo,
-                  isTurn: _activePlayer == 2 && !_battleFinished,
-                  isAttacking: _playerTwoAttacking,
-                  isHit: _playerTwoHit,
-                  healthColor: _healthColor(
-                    _playerTwo.hp / _playerTwo.maxHp,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                _ActionPanel(
-                  title: 'Movimientos de ${_playerOne.name}',
-                  enabled: _activePlayer == 1 && !_battleFinished,
-                  fighter: _playerOne,
-                  onMoveSelected: _handleMove,
-                  iconForMove: _iconForMove,
-                ),
-                const SizedBox(height: 8),
-                _ActionPanel(
-                  title: 'Movimientos de ${_playerTwo.name}',
-                  enabled: _activePlayer == 2 && !_battleFinished,
-                  fighter: _playerTwo,
-                  onMoveSelected: _handleMove,
-                  iconForMove: _iconForMove,
-                ),
-                const SizedBox(height: 8),
-                Expanded(
-                  child: _HistoryPanel(history: _history),
-                ),
-              ],
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFFF5FAFF), Color(0xFFDAECFF), Color(0xFFC6E0FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
-        ),
+          Positioned(
+            top: -70,
+            left: -45,
+            child: Container(
+              width: 190,
+              height: 190,
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E88E5).withOpacity(0.08),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -85,
+            right: -70,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF9A825).withOpacity(0.09),
+                shape: BoxShape.circle,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  _BattleHeader(
+                    activePlayerName:
+                        _activePlayer == 1 ? _playerOne.name : _playerTwo.name,
+                    statusText: _statusText,
+                    isFinished: _battleFinished,
+                  ),
+                  const SizedBox(height: 8),
+                  _PokemonBattleCard(
+                    fighter: _playerOne,
+                    isTurn: _activePlayer == 1 && !_battleFinished,
+                    isAttacking: _playerOneAttacking,
+                    isHit: _playerOneHit,
+                    healthColor: _healthColor(
+                      _playerOne.hp / _playerOne.maxHp,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _PokemonBattleCard(
+                    fighter: _playerTwo,
+                    isTurn: _activePlayer == 2 && !_battleFinished,
+                    isAttacking: _playerTwoAttacking,
+                    isHit: _playerTwoHit,
+                    healthColor: _healthColor(
+                      _playerTwo.hp / _playerTwo.maxHp,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _ActionPanel(
+                    title: 'Movimientos de ${currentFighter.name}',
+                    enabled: !_battleFinished,
+                    fighter: currentFighter,
+                    onMoveSelected: _handleMove,
+                    iconForMove: _iconForMove,
+                    colorForMove: _colorForMove,
+                  ),
+                  const SizedBox(height: 8),
+                  Expanded(
+                    child: _HistoryPanel(history: _history),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -399,16 +435,24 @@ class _BattleHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF0B5ED7).withOpacity(0.15)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 10,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Text(
             isFinished ? 'Combate finalizado' : 'Turno actual: $activePlayerName',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
           ),
           const SizedBox(height: 4),
           Text(statusText, textAlign: TextAlign.center),
@@ -439,12 +483,19 @@ class _PokemonBattleCard extends StatelessWidget {
       duration: const Duration(milliseconds: 180),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isHit ? const Color(0xFFFFEBEE) : Colors.white,
+        color: isHit ? const Color(0xFFFFEBEE) : Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: isTurn ? const Color(0xFF1565C0) : Colors.transparent,
           width: 2,
         ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14000000),
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
+        ],
       ),
       child: Row(
         children: [
@@ -455,8 +506,8 @@ class _PokemonBattleCard extends StatelessWidget {
               scale: isAttacking ? 1.08 : 1.0,
               duration: const Duration(milliseconds: 140),
               child: Container(
-                width: 90,
-                height: 90,
+                width: 76,
+                height: 76,
                 decoration: BoxDecoration(
                   color: const Color(0xFFE8F4FF),
                   borderRadius: BorderRadius.circular(14),
@@ -479,8 +530,17 @@ class _PokemonBattleCard extends StatelessWidget {
                 Text(
                   fighter.name,
                   style: const TextStyle(
-                    fontSize: 18,
+                    fontSize: 17,
                     fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Multiplicador: x${fighter.damageMultiplier.toStringAsFixed(2)}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF3A5A7F),
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -519,6 +579,7 @@ class _ActionPanel extends StatelessWidget {
     required this.fighter,
     required this.onMoveSelected,
     required this.iconForMove,
+    required this.colorForMove,
   });
 
   final String title;
@@ -526,6 +587,7 @@ class _ActionPanel extends StatelessWidget {
   final PokemonFighter fighter;
   final ValueChanged<MoveType> onMoveSelected;
   final IconData Function(MoveType move) iconForMove;
+  final Color Function(MoveType move) colorForMove;
 
   @override
   Widget build(BuildContext context) {
@@ -533,8 +595,16 @@ class _ActionPanel extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF0B5ED7).withOpacity(0.12)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x12000000),
+            blurRadius: 8,
+            offset: Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -543,19 +613,52 @@ class _ActionPanel extends StatelessWidget {
             title,
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
           ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: MoveType.values.map((move) {
+          const SizedBox(height: 10),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: MoveType.values.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 8,
+              crossAxisSpacing: 8,
+              childAspectRatio: 2.45,
+            ),
+            itemBuilder: (_, index) {
+              final move = MoveType.values[index];
               final canUseNow = enabled && fighter.canUse(move.ppCost);
+              final moveColor = colorForMove(move);
 
-              return FilledButton.tonalIcon(
+              return ElevatedButton(
                 onPressed: canUseNow ? () => onMoveSelected(move) : null,
-                icon: Icon(iconForMove(move)),
-                label: Text('${move.label} (${move.ppCost} PP)'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: moveColor.withOpacity(0.14),
+                  foregroundColor: moveColor,
+                  disabledBackgroundColor: const Color(0xFFE6ECF3),
+                  disabledForegroundColor: const Color(0xFF8CA2BC),
+                  side: BorderSide(color: moveColor.withOpacity(0.35)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(iconForMove(move), size: 18),
+                    const SizedBox(width: 6),
+                    Flexible(
+                      child: Text(
+                        '${move.label} (${move.ppCost})',
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               );
-            }).toList(),
+            },
           ),
         ],
       ),
@@ -576,8 +679,9 @@ class _HistoryPanel extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFF0B5ED7).withOpacity(0.12)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -597,7 +701,17 @@ class _HistoryPanel extends StatelessWidget {
                     separatorBuilder: (_, __) => const Divider(height: 8),
                     itemBuilder: (_, index) {
                       final entry = shownEntries[index];
-                      return Text(entry.description);
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 8,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF4F8FF),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(entry.description),
+                      );
                     },
                   ),
           ),

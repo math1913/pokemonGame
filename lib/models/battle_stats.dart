@@ -117,7 +117,7 @@ class MoveLogEntry {
     }
 
     final criticalText = wasCritical ? ' (Critico)' : '';
-    return '$attackerName uso ${move.label} e hizo $value de danio$criticalText.';
+    return '$attackerName uso ${move.label} e hizo $value de da\u00f1o$criticalText.';
   }
 }
 

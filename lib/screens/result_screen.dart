@@ -40,121 +40,154 @@ class ResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Resultado de la batalla')),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0D47A1), Color(0xFF90CAF9)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF0B3B8A), Color(0xFF1E88E5), Color(0xFFEAF4FF)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
           ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18),
+          Positioned(
+            top: -60,
+            right: -60,
+            child: Container(
+              width: 210,
+              height: 210,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.13),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: -80,
+            left: -80,
+            child: Container(
+              width: 230,
+              height: 230,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withOpacity(0.1),
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(18),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.95),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: const Color(0xFF0B5ED7).withOpacity(0.14),
                         ),
-                        child: Column(
-                          children: [
-                            const Text(
-                              'Ganador',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              result.winnerName,
-                              style: const TextStyle(
-                                fontSize: 32,
-                                fontWeight: FontWeight.w900,
-                                color: Color(0xFF0D47A1),
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            Text(
-                              'Ataques totales: ${result.totalAttacks}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Duracion aproximada: ${_durationLabel(result.duration)}',
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Ataque mas usado global: ${_mostUsedOverall().label}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x22000000),
+                            blurRadius: 15,
+                            offset: Offset(0, 8),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      _StatsCard(
-                        title: playerOneTemplate.name,
-                        stats: result.playerOneStats,
-                      ),
-                      const SizedBox(height: 12),
-                      _StatsCard(
-                        title: playerTwoTemplate.name,
-                        stats: result.playerTwoStats,
-                      ),
-                      const SizedBox(height: 16),
-                      FilledButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).pushReplacement(
-                            MaterialPageRoute<void>(
-                              builder: (_) => BattleScreen(
-                                playerOneTemplate: playerOneTemplate,
-                                playerTwoTemplate: playerTwoTemplate,
-                              ),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.refresh),
-                        label: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 11),
-                          child: Text(
-                            'Nueva Batalla',
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.emoji_events,
+                            color: Color(0xFFF9A825),
+                            size: 46,
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Ganador',
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: 18,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          Text(
+                            result.winnerName,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF0D47A1),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            'Ataques totales: ${result.totalAttacks}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Duracion aproximada: ${_durationLabel(result.duration)}',
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Ataque mas usado global: ${_mostUsedOverall().label}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _StatsCard(
+                      title: playerOneTemplate.name,
+                      stats: result.playerOneStats,
+                    ),
+                    const SizedBox(height: 12),
+                    _StatsCard(
+                      title: playerTwoTemplate.name,
+                      stats: result.playerTwoStats,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute<void>(
+                            builder: (_) => BattleScreen(
+                              playerOneTemplate: playerOneTemplate,
+                              playerTwoTemplate: playerTwoTemplate,
+                            ),
+                          ),
+                        );
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text(
+                        'Nueva Batalla',
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      const SizedBox(height: 10),
-                      OutlinedButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).popUntil((route) => route.isFirst);
-                        },
-                        icon: const Icon(Icons.home),
-                        label: const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 11),
-                          child: Text('Volver al Inicio'),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      },
+                      icon: const Icon(Icons.home),
+                      label: const Text('Volver al Inicio'),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -171,8 +204,16 @@ class _StatsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.95),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFF0B5ED7).withOpacity(0.12)),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x18000000),
+            blurRadius: 9,
+            offset: Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +224,7 @@ class _StatsCard extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text('Acciones exitosas: ${stats.successfulActions}'),
-          Text('Danio total causado: ${stats.totalDamage}'),
+          Text('Da\u00f1o total causado: ${stats.totalDamage}'),
           Text('Curacion total: ${stats.totalHealing}'),
           Text('PP total gastado: ${stats.totalPpSpent}'),
           Text('Movimiento mas usado: ${stats.mostUsedMove.label}'),

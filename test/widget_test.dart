@@ -7,7 +7,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('POKEMON'), findsOneWidget);
-    expect(find.text('Comencar Batalla'), findsOneWidget);
+    expect(find.text('Comenzar Batalla'), findsOneWidget);
     expect(find.text('Salir'), findsOneWidget);
   });
 }
